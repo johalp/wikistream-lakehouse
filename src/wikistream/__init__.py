@@ -1,0 +1,1 @@
+"""Wikistream Lakehouse streaming package."""
