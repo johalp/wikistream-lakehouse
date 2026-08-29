@@ -23,10 +23,12 @@ def ensure_topic() -> None:
         future.result()
         LOGGER.info("Created topic %s with 3 partitions", settings.kafka_topic)
     except KafkaException as exc:
-        if exc.args and getattr(exc.args[0], "code", lambda: None)() == KafkaError.TOPIC_ALREADY_EXISTS:
-            LOGGER.info("Topic %s already exists", settings.kafka_topic)
-            return
-        raise
+        if (
+        exc.args
+        and getattr(exc.args[0], "code", lambda: None)()
+        == KafkaError.TOPIC_ALREADY_EXISTS
+        ):
+            raise
 
 
 if __name__ == "__main__":

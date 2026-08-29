@@ -1,7 +1,7 @@
 
-import requests
 import json
-import logging
+
+import requests
 from confluent_kafka import Producer
 
 EVENT_STEAM_URL = "https://stream.wikimedia.org/v2/stream/recentchange"

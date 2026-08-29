@@ -2,7 +2,6 @@ import json
 
 from confluent_kafka import Consumer
 
-
 KAFKA_TOPIC = "wikimedia.recentchange"
 
 def main():
@@ -16,7 +15,7 @@ def main():
     consumer.subscribe([KAFKA_TOPIC])
 
     print("Listenng for kafka messages...")
-    consumer.commit(message=message, asynchronous=False)
+
 
     try:
         while True:
@@ -35,7 +34,32 @@ def main():
                 event = json.loads(raw_message)
             except json.JSONDecodeError:
                 print(f"Skipping non-JSON message: {raw_message}")
+
+                consumer.commit(
+                    message=message,
+                    asynchronous=False,
+                )
+
                 continue
+
+            key = message.key()
+
+            if key is not None:
+                key = key.decode("utf-8")
+
+            print(
+                f"partition={message.partition()} "
+                f"offset={message.offset()} "
+                f"key={key} "
+                f"title={event['title']} "
+                f"wiki={event['wiki']} "
+                f"type={event['change_type']}"
+            )
+
+            consumer.commit(
+                message=message,
+                asynchronous=False,
+            )
 
     except KeyboardInterrupt:
         print("Stopping consumer")

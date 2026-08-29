@@ -28,7 +28,7 @@ class WikimediaChange(BaseModel):
     new_revision: int | None = None
 
     @classmethod
-    def from_raw(cls, raw: dict[str, Any]) -> "WikimediaChange":
+    def from_raw(cls, raw: dict[str, Any]) -> WikimediaChange:
         meta = raw.get("meta") or {}
         lengths = raw.get("length") or {}
         revisions = raw.get("revision") or {}

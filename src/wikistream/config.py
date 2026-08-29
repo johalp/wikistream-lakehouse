@@ -13,9 +13,12 @@ class Settings:
     wikimedia_user_agent: str = "wikistream-lakehouse/0.1"
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         return cls(
-            kafka_bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS", cls.kafka_bootstrap_servers),
+            kafka_bootstrap_servers=os.getenv(
+            "KAFKA_BOOTSTRAP_SERVERS",
+            cls.kafka_bootstrap_servers,
+            ),
             kafka_topic=os.getenv("KAFKA_TOPIC", cls.kafka_topic),
             kafka_consumer_group=os.getenv("KAFKA_CONSUMER_GROUP", cls.kafka_consumer_group),
             wikimedia_stream_url=os.getenv("WIKIMEDIA_STREAM_URL", cls.wikimedia_stream_url),
