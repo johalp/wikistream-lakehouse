@@ -36,7 +36,7 @@ def main():
 
                 clean_event = transform_event(event)
 
-                message_key = f"{clean_evgent['wiki']}:{clean_event['title']}"
+                message_key = f"{clean_event['wiki']}:{clean_event['title']}"
 
                 kafka_producer.produce(
                     topic="wikimedia.recentchange",
