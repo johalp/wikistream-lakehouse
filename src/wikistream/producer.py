@@ -2,12 +2,16 @@
 import requests
 import json
 import logging
+from confluent_kafka import Producer
 
 EVENT_STEAM_URL = "https://stream.wikimedia.org/v2/stream/recentchange"
 
 
 
 def main():
+    kafka_producer = Producer({
+    "bootstrap.servers": "localhost:9092"
+    })
     headers = {
         "User-Agent": "wikistream-lakehouse/0.1 (contact: angeljohal5@gmail.com)",
         "Accept": "application/json",
@@ -25,14 +29,30 @@ def main():
 
     print("Connected to wikimedia")
 
-    for line in response.iter_lines():
-        if line:
-            event = json.loads(line)
+    try:
+        for line in response.iter_lines():
+            if line:
+                event = json.loads(line)
 
-            clean_event = transform_event(event)
-            print(clean_event)
+                clean_event = transform_event(event)
 
-            break
+                message_key = f"{clean_evgent['wiki']}:{clean_event['title']}"
+
+                kafka_producer.produce(
+                    topic="wikimedia.recentchange",
+                    key=message_key.encode("utf-8"),
+                    value=json.dumps(clean_event).encode("utf-8")
+                )
+
+                kafka_producer.poll(0)
+
+                print("Sent event to Kafka")
+
+    except KeyboardInterrupt:
+        print("Stopping producer")
+
+    finally:
+        kafka_producer.flush()
 
 
 def transform_event(event):
